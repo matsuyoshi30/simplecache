@@ -52,6 +52,7 @@ func (l *LRU) Get(k int) (int, error) {
 func (l *LRU) Put(k, v int) error {
 	// existing entry
 	if n, ok := l.dict[k]; ok {
+		l.dict[k].entry.val = v
 		l.list.move(n)
 		return nil
 	}

@@ -50,3 +50,26 @@ func TestLRU(t *testing.T) {
 		})
 	}
 }
+
+func TestLRU_PutExistKey(t *testing.T) {
+	l := lru.NewLRU(2)
+	for i := 0; i < 2; i++ {
+		err := l.Put(i, i)
+		if err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	err := l.Put(1, 10)
+	if err != nil {
+		t.Errorf("want no error but got %v\n", err)
+	}
+
+	v, err := l.Get(1)
+	if err != nil {
+		t.Errorf("want no error but got %v\n", err)
+	}
+	if v != 10 {
+		t.Errorf("want 10 but got %v\n", v)
+	}
+}
