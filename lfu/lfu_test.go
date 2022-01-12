@@ -1,6 +1,7 @@
 package lfu_test
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/matsuyoshi30/simplecache/lfu"
@@ -93,4 +94,23 @@ func TestLFU_PutExistKey(t *testing.T) {
 	if v != 10 {
 		t.Errorf("want 10 but got %v\n", v)
 	}
+}
+
+func ExampleLFU() {
+	l := lfu.NewLFU(3)
+
+	l.Put(1, 1)
+	l.Put(2, 2)
+	l.Put(3, 3)
+
+	v, err := l.Get(1) // update entry key 1
+	fmt.Println(v, err)
+
+	l.Put(4, 4)
+
+	_, err = l.Get(2) // returns not found error
+	fmt.Println(err)
+	// Output:
+	// 1 <nil>
+	// not found
 }

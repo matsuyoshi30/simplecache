@@ -1,6 +1,7 @@
 package lru_test
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/matsuyoshi30/simplecache/lru"
@@ -72,4 +73,22 @@ func TestLRU_PutExistKey(t *testing.T) {
 	if v != 10 {
 		t.Errorf("want 10 but got %v\n", v)
 	}
+}
+
+func ExampleLRU() {
+	l := lru.NewLRU(3)
+
+	l.Put(1, 1)
+	l.Put(2, 2)
+	l.Put(3, 3)
+	l.Put(4, 4)
+
+	_, err := l.Get(1) // returns not found error
+	fmt.Println(err)
+
+	v, err := l.Get(2)
+	fmt.Println(v, err)
+	// Output:
+	// not found
+	// 2 <nil>
 }
