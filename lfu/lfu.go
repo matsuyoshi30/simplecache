@@ -1,6 +1,11 @@
 package lfu
 
-import "errors"
+import (
+	"errors"
+	"fmt"
+	"sort"
+	"strings"
+)
 
 // LFU implements simple LFU cache
 type LFU struct {
@@ -79,6 +84,36 @@ func (l *LFU) Put(k, v int) error {
 	return nil
 }
 
+func (l *LFU) String() string {
+	var sb strings.Builder
+
+	keys := make([]int, 0)
+	for k := range l.listmap {
+		keys = append(keys, k)
+	}
+	sort.Ints(keys)
+	for _, k := range keys {
+		if ll, ok := l.listmap[k]; !ok {
+			fmt.Fprintf(&sb, "%d: nothing\n", k)
+		} else {
+			fmt.Fprintf(&sb, "%d: %v", k, ll.head.next)
+			if ll.head.next != ll.tail {
+				n := ll.head.next
+				for {
+					if n.next == ll.tail {
+						break
+					}
+					fmt.Fprintf(&sb, " => %v", n.next)
+					n = n.next
+				}
+			}
+			fmt.Fprintf(&sb, "\n")
+		}
+	}
+
+	return sb.String()
+}
+
 func (l *LFU) update(n *node) {
 	curFreq := n.freq
 	l.listmap[curFreq].delNode(n)
@@ -120,4 +155,8 @@ func (ll *linkedList) delNode(n *node) {
 	n.next.prev = n.prev
 
 	ll.len--
+}
+
+func (n *node) String() string {
+	return fmt.Sprintf("(%d, %d)", n.entry.key, n.entry.val)
 }
