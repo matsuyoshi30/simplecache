@@ -2,6 +2,8 @@ package lru
 
 import (
 	"errors"
+	"fmt"
+	"strings"
 )
 
 // LRU implements simple LRU cache
@@ -70,6 +72,24 @@ func (l *LRU) Put(k, v int) error {
 	return nil
 }
 
+func (l *LRU) String() string {
+	var sb strings.Builder
+
+	fmt.Fprintf(&sb, "%v", l.list.head.next)
+	if l.list.head.next != l.list.tail {
+		n := l.list.head.next
+		for {
+			if n.next == l.list.tail {
+				break
+			}
+			fmt.Fprintf(&sb, " => %v", n.next)
+			n = n.next
+		}
+	}
+
+	return sb.String()
+}
+
 func initLL() *linkedList {
 	ll := &linkedList{
 		head: &node{},
@@ -111,4 +131,8 @@ func (ll *linkedList) removeOldest() int {
 	key := ll.tail.prev.entry.key
 	ll.delNode(ll.tail.prev)
 	return key
+}
+
+func (n *node) String() string {
+	return fmt.Sprintf("(%d, %d)", n.entry.key, n.entry.val)
 }
